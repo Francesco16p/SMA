@@ -1,14 +1,12 @@
 # Logistic regression on the Cushing dataset 
 
-This file gives a complete description of how to reproduce the result concerning the Logistic regression estimated on the Cushing dataset described in Section 5.2. In particular, it provides code for implementing both joint and marginals skew-modal approximation to the model under consideration and for comparing the quality of this approximation with the one of Gaussian Laplace, Gaussian variational Bayes and Gaussian expectation-propogation approxiations. 
+This file contains a complete description of how to reproduce the result concerning the logistic regression estimated on the `Cushing' dataset described in Section 5.2. In particular, it provides code to implement both the joint and marginal skew-modal approximation to the model under consideration and to compare the quality of this approximation with that of the Gaussian Laplace, Gaussian Variational Bayes and Gaussian Expectation Propagation approximations. 
+
+Before starting, create a folder called `LogisticCushing' and set it as the **working directory** for the R environment.
 
 ## Upload the Cushing dataset
 
-We proceed by uploading the Cushing dataset, as described in Section 5.2 of the paper. The aim is to investigate the relationship between four different sub-types of Cushing’s syndrome and two steroid metabolites: Tetrahydrocortisone and Pregnanetriol.
-
-Data are available in the dataframe `Cushings` of the `MASS` library. This contains information on the response variable (`Cushings$Type`), and on the covariates (`Cushings$Tetrahydrocortisone` and `Cushings$Pregnanetriol`). More specifically, `Cushings$Type` summarises information about the underlying type of syndrome of each subject, coded as `a` (adenoma), `b` (bilateral hyperplasia), `c` (carcinoma), or `u` for unknown.
-
-In order to make the response variable suitable for a Logistic regression, we proceed by creating a binary response variable `y` which denotes whether the subject is affected by bilateral hyperplasia or not, and we generate a the design matrix `X` for the model with three columns: intercept, `Cushings$Tetrahydrocortisone`, and `Cushings$Pregnanetriol`. For further use we save such quantities in the RData file  `Cushings.RData`.
+We start by uploading the Cushing's dataset as described in Section 5.2 of the paper. The aim is to investigate the relationship between four different subtypes of Cushing's syndrome and two steroid metabolites: Tetrahydrocortisone and Pregnanetriol.The data are available in the `Cushings` dataframe of the `MASS` library. This contains information on the response variable (`Cushings$Type`) and the covariates (`Cushings$Tetrahydrocortisone` and `Cushings$Pregnanetriol`). More specifically, `Cushings$Type` summarises information about the underlying type of syndrome of each subject, coded as `a` (adenoma), `b` (bilateral hyperplasia), `c` (carcinoma), or `u` for unknown. To make the response variable suitable for a logistic regression, we create a binary response variable `y` indicating whether the subject is affected by bilateral hyperplasia or not, and we generate a design matrix `X` for the model with three columns: intercept, `Cushings$Tetrahydrocortisone` and `Cushings$Pregnanetriol`. We save these quantities in the RData file `Cushings.RData` for further use.
 
 ```r
 # Clear the environment
@@ -39,9 +37,7 @@ save(y, X, n, file = "Cushings.RData")
 
 ## Logistic regression with STAN
 
-We now proceed by estimating a Bayesian logistic regression with `y` as the variable of interest and the design matrix equal to `X` using the `rstan` library. The coefficients are assumed to have independent Gaussian priors with zero mean and standard error `sd = 4`. Since obtaining i.i.d. samples from the posterior is not straightforward, we use the STAN environment to generate 4 Hamiltonian Monte Carlo chains of length 10,000, which allow us to obtain an accurate approximation of the posterior.
-
-First, we define the model in STAN language. `N` is the sample size, `D` is the number of parameters in the model, `X` is the design matrix which contains the intercept, `y` is the response variable, and `sd` is the standard error of the prior.
+We now estimate a Bayesian logistic regression with `y` as the variable of interest and the design matrix equal to `X` using the `rstan` library. The coefficients are assumed to have independent Gaussian priors with zero mean and standard error `sd = 4`. Since obtaining i.i.d. samples from the posterior is not straightforward, we use the STAN environment to generate 4 Hamiltonian Monte Carlo chains of length 10,000, which allow us to obtain an accurate approximation of the posterior. Let us first define the model in STAN language. In the following, `N` is the sample size, `D` is the number of parameters in the model, `X` is the design matrix containing the intercept, `y` is the response variable, and `sd` is the standard error of the prior.
 
 ```
 data {
@@ -63,11 +59,11 @@ model {
     y ~ bernoulli_logit(X * theta);
 }
 ```
-We now proceed by estimating the model via Hamiltonian Monte Carlo.
+We then save the file for future use with the name `Logistic regression STAN.stan`.
+
 
 ### Data preparation 
-
-First, we clear the environment, load the libraries needed and create a list containing `y`, `X`, `D` (number of predictors), `N` (number of observations), and `sd` (standard deviation of the priors).
+We now proceed to estimate the model using Hamiltonian Monte Carlo. First we clear the environment, load the necessary libraries and create a list containing `y`, `X`, `D` (number of predictors), `N` (number of observations) and `sd` (standard deviation of the priors).
 
 ```r
 rm(list = ls())
@@ -87,7 +83,7 @@ df <- list(y = y, X = X, D = ncol(X), N = nrow(X), sd = 5)
 
 ### Compile the STAN model and sample from it
 
-Let us now compile the STAN model and sampling from its posterior distribution by specifying the number of iterations of the 4 chains, the warm-up period and seed for reproducibility.
+Let us now build the STAN model and sample from its posterior distribution, specifying the number of iterations of the 4 chains, the warm-up period and the seed for reproducibility.
 
 ```r
 stan_model_file <- 'Logistic regression STAN.stan'
@@ -99,6 +95,9 @@ To extract the results of the Markov Chain Monte Carlo simulation write.
 
 ```r
 MCMC_logistic <- extract(fit)$theta
+
+# Save MCMC output for future use
+save(MCMC_logistic, "MCMC_logistic.RData")
 ```
 
 ### Estimate posterior densities using `mclust`
@@ -306,7 +305,7 @@ To obtain joint, bivariate and marginals skew-modal approximations of the poster
 # Third log-likelihood derivatives evaluated at
 nu_ttt <- trd_derivative(map$par)
 ```
-Once that the third log-likelihood derivative is obtained it is possible to compute the skewnees-inducing coefficients of bivariate and marginal skew-modal approximation as reported in Section 4.2 of the paper. To do it we define the function `coef_marginal()` wich takes as input the paramters: `loc`, a numerical vector containing the position of the parameters to which the bivariate/marginal approximation refers to; `a2`, which corresponds to the covariance matrix of the Gaussian component and `a3`, the array of third log-likelihood derivatives.
+Once the third log-likelihood derivative is obtained, it is possible to compute the skewness inducing coefficients of the bivariate and marginal skew-modal approximation as reported in section 4.2 of the paper. To do this, we define the function `coef_marginal()`, which takes the following parameters as input: `loc`, a numerical vector containing the position of the parameters to which the bivariate/marginal approximation refers; `a2`, which corresponds to the covariance matrix of the Gaussian component and `a3`, the array of the third log-likelihood derivatives.
 
 ```r
 # Parameters:
@@ -528,7 +527,7 @@ save(la,nu_ttt,coef_01,coef_02,coef_12,coef_0, coef_1, coef_2,
 ```
 
 ## Mean-field gaussian variational Bayes approximation
-The implementation on real data in Section 5.2 of the main paper reports also the performance of two other common Gaussian approximations, mean field variational bayes and Gaussian expectation propagation. This section provides the code to implement the former. To implement the approximation, we use the implementation developed by Durante and Rigon (2019), which can be obtained by downloading the file `logistic.R` at `https://github.com/tommasorigon/logisticVB`. Once this is done, the mean and the covariance matrix of the mean-field approximation are obtained with the following code.
+The study in Section 5.2 of the main paper also reports on the performance of two other common Gaussian approximations, mean-field variational Bayes and Gaussian expectation propagation. This section provides the code to implement the former. To do it, we use the code developed by Durante and Rigon (2019), which can be obtained by downloading the file `logistic.R` from `https://github.com/tommasorigon/logisticVB`. Once this is done, the mean and the covariance matrix of the mean field approximation are obtained using the following code.
 
 ```r
 rm(list = ls())
@@ -643,7 +642,7 @@ file_path2 = ".../cov_ep_logistic"
 writedlm(file_path1, m_ep, ',')
 writedlm(file_path2, cova_ep, ',')
 ```
-At this point, it is then possible to use the new approximation in the R environment and define the joint, bivariate and marginal Gaussian expectation propagation approximations as done for the other approximations considered above.
+At this point, it is possible to use the new approximation in the R environment and define the joint, bivariate and marginal Gaussian expectation propagation approximations as done for the other approximations considered above.
 
 ```r
 # Load mean 
@@ -1047,4 +1046,102 @@ t(round(df_tv_sd,5))
 save(df_tv, file = "Total variation mcmc logistic")
 save(df_tv_sd, file = "Sd Total variation mcmc logistic")
 ```
+## Highest posterior density credible intervals
 
+We conclude this tutorial by providing code comparing the quality of Laplace and skew-modal approximations in terms of HPD intervals. First we clean the environment, load the necessary quantities and define a function which generates samples from the skew-modal approximation.
+```r
+# Load packages
+rm(list = ls())
+library(mvtnorm)
+library(coda)
+
+# Load the MCMC sample obtained with Stan and the parameters of the Laplace and 
+# skew-modal approximations
+
+load("MCMC_logistic.RData")
+load("Logistic_Laplace_approx.RData")
+load("Logistic_SkewM_approx.RData")
+
+# Define the function to simulate from the skew-modal distribution
+
+ske_sim <- function(nsim)
+{
+  # Function evelauting the skewness inducing factor of the 
+  # skew modal approximation
+  skewnees_calc <- function(theta)
+  {
+    skewness <- 0
+    for(s in 1:3)
+    {
+      for(t in 1:3)
+      {
+        for(k in 1:3)
+        {
+          skewness <- skewness + theta[s]*theta[t]*theta[k]*nu_ttt[s,t,k]
+        } 
+      }
+    }
+    skewness <- sqrt(2*pi)*skewness/12
+    skewness
+  }
+  
+  # Simulation symmetric component 
+  Z0 <- mvtnorm::rmvnorm(nsim, mean = rep(0,3), sigma = la$V)
+  # Evaluate skewness factor
+  skn <- pnorm( apply(Z0,1, skewnees_calc) )
+  # Flip or not the simulated point
+  flip <- 2*rbinom(nsim,1,skn)-1
+  out <- Z0*flip
+  # Add location parameter
+  pst <- matrix(rep(la$m,nsim), ncol = 3, byrow = TRUE)
+  out + pst
+}
+```
+
+To obtain the HPD intervals, we use the `HPDinterval()` function from the `coda` library.
+This function requires a sample from the distribution for which the HPD intervals
+are to be derived. For the posterior, we use the same sample used to estimate the
+posterior densities in the previous part of the notebook, while for the Laplace
+and skew-modal approximations, two samples of dimension $10^4$ are obtained.
+
+```r
+nsim <- 10^4
+set.seed(1)
+# sample skew_modal
+sim_ske <- ske_sim(nsim)
+# sample Laplace
+sim_la <- mvtnorm::rmvnorm(n = nsim,mean = la$m, sigma = la$V)
+```
+
+At this point we can compute the mean absolute difference between the HPD intervals of the logistic posterior and the ones of the two approximation.
+
+### $\alpha = 0.8$
+
+```r
+HPD_err_ske08 <- mean( abs(HPDinterval(as.mcmc(sim_ske,0.8)) - HPDinterval(as.mcmc(MCMC_logistic),0.8))) 
+HPD_err_la08 <- mean( abs(HPDinterval(as.mcmc(sim_la,0.8)) - HPDinterval(as.mcmc(MCMC_logistic),0.8))) 
+
+HPD_err08 <- c(HPD_err_ske08,HPD_err_la08)
+names(HPD_err08) <- c("Skew-modal", "Laplace")
+```
+### $\alpha = 0.9$
+```r
+HPD_err_ske09 <- mean( abs(HPDinterval(as.mcmc(sim_ske,0.9)) - HPDinterval(as.mcmc(MCMC_logistic),0.9))) 
+HPD_err_la09 <- mean( abs(HPDinterval(as.mcmc(sim_la,0.9)) - HPDinterval(as.mcmc(MCMC_logistic),0.9))) 
+
+HPD_err09 <- c(HPD_err_ske09,HPD_err_la09)
+names(HPD_err09) <- c("Skew-modal", "Laplace")
+```
+### $\alpha = 0.95$
+```r
+HPD_err_ske095 <- mean( abs(HPDinterval(as.mcmc(sim_ske,0.95)) - HPDinterval(as.mcmc(MCMC_logistic),0.95))) 
+HPD_err_la095 <- mean( abs(HPDinterval(as.mcmc(sim_la,0.95)) - HPDinterval(as.mcmc(MCMC_logistic),0.95))) 
+
+HPD_err095 <- c(HPD_err_ske095,HPD_err_la095)
+names(HPD_err095) <- c("Skew-modal", "Laplace")
+```
+A table containing the results for all values of $\alpha$ can be obtained writing
+```r
+# Final table
+round(rbind(HPD_err08,HPD_err09,HPD_err095),2)
+```
