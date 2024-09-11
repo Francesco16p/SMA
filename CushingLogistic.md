@@ -619,12 +619,16 @@ using Pkg
 Pkg.add("RCall")
 Pkg.build("RCall")
 Pkg.add("CSV")
+Pkg.add("DelimitedFiles")
+Pkg.build("DelimitedFiles")
 pkg"add https://github.com/JuliaInterop/RCall.jl"
 pkg"add https://github.com/dahtah/GaussianEP.jl"
+using DelimitedFiles
 using Statistics
 using CSV
 using RCall
 using GaussianEP
+using DelimitedFiles
 
 # Use the R interface to retrive the Cushings dataset using the function file.choose()
 R"Rdata <- load('.../Cushings.RData')"
