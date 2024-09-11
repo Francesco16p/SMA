@@ -821,7 +821,7 @@ This section completes the work done in the previous part of the notebook by pro
 
 We start by cleaning up the working environment, loading the approximations and sampling from the reference density that will be used to implement importance sampling.
 
-```
+```r
 rm(list = ls())
 library(mvtnorm)
 library(mclust)
@@ -1092,7 +1092,7 @@ tv_pfvb0 <- diff_pfvb0(simulated_ex[ ,1])
 ```
 ### TV errors marginal posterior $\theta_1$
 
-```
+```r
 # TV marginal posterior theta_1 posterior vs Laplace 
 
 diff_la1 <- function(x)
