@@ -34,6 +34,7 @@ model {
     // Likelihood
     y ~ bernoulli(Phi(X * theta));  // Using probit link
 }
+
 ```
 We then save the file for future use with the name `probit regression STAN.stan`.
 
@@ -718,17 +719,21 @@ As a last approximation, we consider Gaussian expectation propagation. This appr
 
 ```julia
 
-# Load the required libraries
+# Load needed packages
 using Pkg
 Pkg.add("RCall")
 Pkg.build("RCall")
 Pkg.add("CSV")
+Pkg.add("DelimitedFiles")
+Pkg.build("DelimitedFiles")
 pkg"add https://github.com/JuliaInterop/RCall.jl"
 pkg"add https://github.com/dahtah/GaussianEP.jl"
+using DelimitedFiles
 using Statistics
 using CSV
 using RCall
 using GaussianEP
+using DelimitedFiles
 
 # Use the R interface to retrive the Cushings dataset using the function file.choose()
 R"Rdata <- load('/Users/Francesco/Library/CloudStorage/GoogleDrive-pozza161296.fp@gmail.com/Other computers/Il mio laptop/Post doc/Code AoS - final version/Cushings.RData')"
