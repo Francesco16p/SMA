@@ -58,6 +58,7 @@ model {
     // Likelihood
     y ~ bernoulli_logit(X * theta);
 }
+
 ```
 We then save the file for future use with the name `Logistic regression STAN.stan`.
 
@@ -97,7 +98,7 @@ To extract the results of the Markov Chain Monte Carlo simulation write.
 MCMC_logistic <- extract(fit)$theta
 
 # Save MCMC output for future use
-save(MCMC_logistic, "MCMC_logistic.RData")
+save(MCMC_logistic, file = "MCMC_logistic.RData")
 ```
 
 ### Estimate posterior densities using `mclust`
