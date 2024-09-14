@@ -851,6 +851,7 @@ load("Probit_PFVB_approx.RData")
 # variable with mean the MAP and covariance matrix equal to the diagonal component 
 # of the inverse observed information infalted by 3
 
+set.seed(1)
 simulated_ex <- rmvnorm(10^4, mean = la_probit$m, sigma = 3*diag(diag(la_probit$V)))
 ```
 
