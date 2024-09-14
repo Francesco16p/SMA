@@ -154,7 +154,7 @@ save(d0_probit,d1_probit,d2_probit,d01_probit,
 
 ## Laplace and skew-modal approximations
 
-Let us now obtain both the Gaussian Laplace and the skew-modal approximations of the posterior distribution.This process involves the computation of the posterior mode (MAP), of the observed information and of the third log-likelihood derivative.
+Let us now obtain both the Gaussian Laplace and the skew-modal approximations of the posterior distribution. This process involves the computation of the posterior mode (MAP), of the observed information and of the third log-likelihood derivative.
 
 ### Evaluation of the posterior mode
 
