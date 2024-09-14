@@ -631,6 +631,7 @@ using GaussianEP
 using DelimitedFiles
 
 # Use the R interface to retrive the Cushings dataset using the function file.choose()
+# To run the code specifies the path of Cushings.RData
 R"Rdata <- load('.../Cushings.RData')"
 @rget y;  @rget X;
 
@@ -642,6 +643,8 @@ G = ep_glm(X,y1,Logit(),τ=1/5^2) #EP estimation
 # Save mean and covariance matrix
 m_ep = mean(G)
 cova_ep = cov(G)
+
+# saves the results in LogitCushing
 file_path1 = ".../mean_ep_logistic"
 file_path2 = ".../cov_ep_logistic"
 writedlm(file_path1, m_ep, ',')
