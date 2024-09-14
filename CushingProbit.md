@@ -183,7 +183,7 @@ log_post_probit <- function(theta)
 
 At this point, the MAP is obtained by writing 
 
-```
+```r
 # MAP
 map_probit <- optim(rep(0,d), function(k) -log_post_probit(k),method ="BFGS", hessian = T )
 
