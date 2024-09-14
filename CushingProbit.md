@@ -736,7 +736,8 @@ using GaussianEP
 using DelimitedFiles
 
 # Use the R interface to retrive the Cushings dataset using the function file.choose()
-R"Rdata <- load('/Users/Francesco/Library/CloudStorage/GoogleDrive-pozza161296.fp@gmail.com/Other computers/Il mio laptop/Post doc/Code AoS - final version/Cushings.RData')"
+# To run the code specifies the path of Cushings.RData
+R"Rdata <- load('.../Cushings.RData')"
 @rget y;  @rget X;
 
 # Epglm logit model
@@ -747,6 +748,8 @@ G = ep_glm(X,y1,Probit(),τ=1/5^2) #EP estimation
 # Save mean and covariance matrix
 m_ep_probit = mean(G)
 cova_ep_probit = cov(G)
+
+# saves the results in ProbitCushing
 file_path1 = "/Users/Francesco/Library/CloudStorage/GoogleDrive-pozza161296.fp@gmail.com/Other computers/Il mio laptop/Post doc/Code AoS - final version/mean_ep_probit"
 file_path2 = "/Users/Francesco/Library/CloudStorage/GoogleDrive-pozza161296.fp@gmail.com/Other computers/Il mio laptop/Post doc/Code AoS - final version/cov_ep_probit"
 writedlm(file_path1, m_ep_probit, ',')
