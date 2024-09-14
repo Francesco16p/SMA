@@ -626,7 +626,7 @@ simulated_pfvb <- sampleSUN_PFM(paramsPFM=paramsSMF,X=X,y=y,nu2=nu2,
 simulated_pfvb <- t(simulated_pfvb)
 ```
 To sample from the approximation write
-```
+```r
 # sample from approximate partially-factorized approximation
 set.seed(1) # set seed for reproducibility
 simulated_pfvb <- sampleSUN_PFM(paramsPFM=paramsSMF,X=X,y=y,nu2=nu2,
