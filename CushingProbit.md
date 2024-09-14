@@ -719,37 +719,45 @@ As a last approximation, we consider Gaussian expectation propagation. This appr
 
 ```julia
 
-# Load needed packages
+# EP approximation Probit regression
+# Load the required libraries
+
 using Pkg
 Pkg.add("RCall")
 Pkg.build("RCall")
 Pkg.add("CSV")
 Pkg.add("DelimitedFiles")
 Pkg.build("DelimitedFiles")
+Pkg.add("Distributions")
+Pkg.build("Distributions")
 pkg"add https://github.com/JuliaInterop/RCall.jl"
 pkg"add https://github.com/dahtah/GaussianEP.jl"
-using DelimitedFiles
 using Statistics
 using CSV
 using RCall
 using GaussianEP
-using DelimitedFiles
+using Distributions
 
 # Use the R interface to retrive the Cushings dataset using the function file.choose()
 # To run the code specifies the path of Cushings.RData
-R"Rdata <- load('.../Cushings.RData')"
+R"Rdata <- load('C:/Users/franc/Documents/Francesco/ProbitCushing/Cushings.RData')"
 @rget y;  @rget X;
 
 # Epglm logit model
 X = X'
 y1 = Bool.(y)
+
+# Define probit link
+struct Probit <: GaussianEP.Likelihood end
+function GaussianEP.log_dens(::Probit, η, y)
+    return logcdf(Normal(0, 1), η) * y + logcdf(Normal(0, 1), -η) * (1 - y)
+end
+
 G = ep_glm(X,y1,Probit(),τ=1/5^2) #EP estimation 
 
-# Save mean and covariance matrix
+# saves the results in ProbitCushing
 m_ep_probit = mean(G)
 cova_ep_probit = cov(G)
-
-# saves the results in ProbitCushing
 file_path1 = ".../mean_ep_probit"
 file_path2 = ".../cov_ep_probit"
 writedlm(file_path1, m_ep_probit, ',')
