@@ -737,6 +737,7 @@ using CSV
 using RCall
 using GaussianEP
 using Distributions
+using DelimitedFiles
 
 # Use the R interface to retrive the Cushings dataset using the function file.choose()
 # To run the code specifies the path of Cushings.RData
