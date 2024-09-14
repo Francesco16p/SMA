@@ -540,7 +540,7 @@ tolerance <- 1e-3 # tolerance to establish ELBO convergence
 paramsMF = getParamsMF(X,y,nu2,tolerance,maxIter = 1e4)
 mf_probit <- list()
 mf_probit$m <- paramsMF$meanBeta
-mf_probit$V <- paramsMF$V
+mf_probit$V <- diag(paramsMF$diagV)
 ```
 
 To obtain the joint, bivariate and marginal mean-field approximations of the posterior density write
