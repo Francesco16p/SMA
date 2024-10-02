@@ -12,3 +12,4 @@ This repository provides **tutorials to implement the inference methods associat
 
 All the analyses are performed with a **MacBook Pro (OS Sonoma, version 14.5)**, using a `R` version **4.3.2**.
 
+**IMPORTANT:** Although a seed is set at the beginning of each routine, the final output may be subject to slight variations depending on which version of the `R` packages has been used in the implementation of the code. This is due to possible internal changes of certain functions when the package version has been updated. **However, the magnitude of these minor variations is negligible and does not affect the final conclusions.**
