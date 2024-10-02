@@ -522,7 +522,7 @@ save(la,nu_ttt,coef_01,coef_02,coef_12,coef_0, coef_1, coef_2,
 ```
 
 ## Mean-field Gaussian variational Bayes approximation
-In the Supplementary Material (Table E.4) we study also the performance of two other common Gaussian approximations, namely, **mean-field variational Bayes** and **Gaussian expectation propagation**. This section provides the code to implement the former. To do it, we use the code developed by Durante and Rigon (2019), which can be obtained by downloading the source file `logistic.R` from `https://github.com/tommasorigon/logisticVB`. Once this source file has been saved into the current working directory, the mean and the covariance matrix of the mean field approximation are obtained using the following code.
+In the Supplementary Material (Table E.4) we study also the performance of two other common Gaussian approximations, namely, mean-field variational Bayes and Gaussian expectation propagation. This section provides the code to implement the former. To do it, we use the code developed by Durante and Rigon (2019), which can be obtained by downloading the source file `logistic.R` from `https://github.com/tommasorigon/logisticVB`. Once this source file has been saved into the current working directory, the mean and the covariance matrix of the mean field approximation are obtained using the following code.
 
 ```r
 rm(list = ls())
