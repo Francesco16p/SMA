@@ -1035,7 +1035,7 @@ t(round(df_tv,2))
 # Save the results
 save(df_tv, file = "Total variation mcmc logistic")
 ```
-## Highest posterior density credible intervals
+## Highest posterior density intervals
 
 We conclude this tutorial by providing the code to compare the quality of the Gaussian Laplace and skew-modal solutions in terms of accuracy in approximating the HPD intervals of the target posterior. First we clean the environment, load the necessary quantities and define a function which generates samples from the skew-modal approximation.
 ```r
