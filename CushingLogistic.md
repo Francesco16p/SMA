@@ -400,7 +400,7 @@ Let us now obtain the joint, bivariates and marginals of the skew-modal approxim
 
 ```r
 
-# Joint skew-symmetric approximation (theta_0,theta_1,theta_2)
+# Joint skew-modal approximation (theta_0,theta_1,theta_2)
 ske_sym_012 <- function(theta)
 {
   centered <- (theta-la$m)
