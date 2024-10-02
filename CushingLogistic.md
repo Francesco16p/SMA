@@ -812,7 +812,7 @@ diff_mf01 <- function(x)
 
 tv_mf01 <- apply(simulated_ex[ ,1:2],1,diff_mf01)
 ```
-## TV errors bivariate posterior $(\theta_0,\theta_2)$
+### TV errors bivariate posterior $(\theta_0,\theta_2)$
 
 ```r
 # TV bivariate posterior vs Laplace
