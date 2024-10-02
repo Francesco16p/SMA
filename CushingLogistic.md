@@ -1090,8 +1090,7 @@ ske_sim <- function(nsim)
 To obtain the HPD intervals, we use the `HPDinterval()` function from the `coda` library.
 This function requires a sample from the posterior distribution for which the HPD intervals
 are to be derived. For the posterior, we use the same sample used to estimate the
-densities in the previous part of the notebook, while for the Laplace and skew-modal approximations  
-two samples of dimension $10^4$ are obtained.
+densities in the previous part of the notebook, while for the Laplace and skew-modal approximations  two samples of dimension $10^4$ are obtained.
 
 ```r
 nsim <- 10^4
