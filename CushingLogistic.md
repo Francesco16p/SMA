@@ -644,7 +644,7 @@ file_path2 = ".../cov_ep_logistic"
 writedlm(file_path1, m_ep, ',')
 writedlm(file_path2, cova_ep, ',')
 ```
-At this point, it is possible to use the new approximation in the R environment and define the joint, bivariates and marginals of the Gaussian EP approximatios as done for the other approximations considered above.
+At this point, it is possible to use the new approximation in the R environment and define the joint, bivariates and marginals of the Gaussian EP approximation as done for the other approximations considered above.
 
 ```r
 # Load mean 
