@@ -40,7 +40,7 @@ save(y, X, n, file = "Cushings.RData")
 We now estimate a Bayesian logistic regression with `y` as the variable of interest and the design matrix equal to `X` using the `rstan` library. The coefficients are assumed to have independent Gaussian priors with zero mean and standard error `sd = 5`. Since obtaining i.i.d. samples from the posterior is not straightforward, we use the STAN environment to generate 4 Hamiltonian Monte Carlo chains of length 10,000, which allow us to obtain an accurate approximation of the posterior. Let us first define the model in STAN language. In the following, `N` is the sample size, `D` is the number of parameters in the model, `X` is the design matrix containing the intercept, `y` is the response variable, and `sd` is the standard error of the prior.
 
 ```
-data {
+stan_model <- 'data {
     int<lower=0> N; // number of observations
     int<lower=0> D; // number of predictors
     matrix[N, D] X; // design matrix
@@ -57,11 +57,9 @@ model {
     theta ~ normal(0, sd);
     // Likelihood
     y ~ bernoulli_logit(X * theta);
-}
+}'
 
 ```
-We then save the file for future use with the name `Logistic regression STAN.stan`.
-
 
 ### Data preparation 
 We now proceed to estimate the model using Hamiltonian Monte Carlo. First we clear the environment, load the necessary libraries and create a list containing `y`, `X`, `D` (number of predictors), `N` (number of observations) and `sd` (standard deviation of the priors).
@@ -77,8 +75,6 @@ load("Cushings.RData")
 
 # Create the data list for STAN
 df <- list(y = y, X = X, D = ncol(X), N = nrow(X), sd = 5)
-
-
 ```
 
 
@@ -87,9 +83,7 @@ df <- list(y = y, X = X, D = ncol(X), N = nrow(X), sd = 5)
 Let us now build the STAN model and sample from its posterior distribution, specifying the number of iterations of the 4 chains, the warm-up period and the seed for reproducibility.
 
 ```r
-stan_model_file <- 'Logistic regression STAN.stan'
-stan_model <- stan_model(stan_model_file)
-fit <- sampling(stan_model, data = df, iter = 10^4, chains = 4, warmup = 5000, seed = 1)
+fit <- stan(model_code = stan_model, data = df, iter = 10^4, chains = 4, warmup = 5000, seed = 1)
 ```
 
 To extract the results of the Markov Chain Monte Carlo simulation write.
