@@ -1,6 +1,6 @@
 # Logistic regression on the Cushing dataset 
 
-This file contains a complete description of how to reproduce some key results concerning the logistic regression estimated on the `Cushing` dataset described in Section 5.2 and Appendix E.5 of the Supplementary Material (see Tables 3 and E.4). In particular, it provides code to implement both the joint and marginal skew-modal approximation to the model under consideration and to compare the quality of this approximation with that of the Gaussian Laplace, Gaussian variational Bayes and Gaussian expectation propagation approximations. 
+This file contains a complete description of how to reproduce some key results concerning the logistic regression estimated on the `Cushing` dataset described in Section 5.2 of the main article and Appendix E.5 of the Supplementary Material (see Tables 3 and E.4). In particular, it provides code to implement both the joint and marginal skew-modal approximation to the model under consideration and to compare the quality of this approximation with that of the Gaussian Laplace, Gaussian variational Bayes and Gaussian expectation propagation approximations. 
 
 Before starting, create a folder called `LogisticCushing' and set it as the working directory for the R environment.
 
