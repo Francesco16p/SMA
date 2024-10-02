@@ -37,7 +37,7 @@ save(y, X, n, file = "Cushings.RData")
 
 ## Logistic regression with STAN
 
-We now estimate a Bayesian logistic regression with `y` as the variable of interest and the design matrix equal to `X` using the `rstan` library. The coefficients are assumed to have independent Gaussian priors with zero mean and standard error `sd = 4`. Since obtaining i.i.d. samples from the posterior is not straightforward, we use the STAN environment to generate 4 Hamiltonian Monte Carlo chains of length 10,000, which allow us to obtain an accurate approximation of the posterior. Let us first define the model in STAN language. In the following, `N` is the sample size, `D` is the number of parameters in the model, `X` is the design matrix containing the intercept, `y` is the response variable, and `sd` is the standard error of the prior.
+We now estimate a Bayesian logistic regression with `y` as the variable of interest and the design matrix equal to `X` using the `rstan` library. The coefficients are assumed to have independent Gaussian priors with zero mean and standard error `sd = 5`. Since obtaining i.i.d. samples from the posterior is not straightforward, we use the STAN environment to generate 4 Hamiltonian Monte Carlo chains of length 10,000, which allow us to obtain an accurate approximation of the posterior. Let us first define the model in STAN language. In the following, `N` is the sample size, `D` is the number of parameters in the model, `X` is the design matrix containing the intercept, `y` is the response variable, and `sd` is the standard error of the prior.
 
 ```
 data {
