@@ -97,7 +97,7 @@ save(MCMC_logistic, file = "MCMC_logistic.RData")
 
 ### Estimate posterior densities using `mclust`
 
-At this point, it is possible to use Markov Chain Monte Carlo simulation to estimate the joint, bivariate and marginal posterior densities using the `mclust` library. These estimated densities are used as proxies for the exact posterior to evaluate the quality of different approximations. In the following, the numbers 0,1,2 indicate which parameters the density refers to. To estimate such functions, write
+At this point, it is possible to use Markov Chain Monte Carlo simulation to estimate the joint, bivariate and marginal posterior densities using the `mclust` library. These estimated densities are used as proxies for the exact posterior to evaluate the quality of different approximations. In the following, the numbers 0, 1 and 2 indicate which parameters the density refers to. To estimate such functions, write
 
 ```r
 library(mclust)
