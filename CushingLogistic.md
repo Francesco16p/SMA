@@ -102,7 +102,7 @@ At this point, it is possible to use Markov Chain Monte Carlo simulation to esti
 ```r
 library(mclust)
 
-# Joint posterior density
+# Joint posterior density (theta_0,theta_1,theta_2)
 d012 <- densityMclust(MCMC_logistic[,1:3])
 
 post_theta_012 <- function(x) {
@@ -110,7 +110,7 @@ post_theta_012 <- function(x) {
   predict(d012, x)
 }
 
-# Bivariate posterior densities theta_0-theta_1
+# Bivariate posterior densities (theta_0,theta_1)
 d01 <- densityMclust(MCMC_logistic[,1:2])
 
 post_theta_01 <- function(x) {
@@ -118,7 +118,7 @@ post_theta_01 <- function(x) {
   predict(d01, x)
 }
 
-# Bivariate posterior densities theta_0-theta_2
+# Bivariate posterior densities (theta_0,theta_2)
 d02 <- densityMclust(MCMC_logistic[,c(1,3)])
 
 post_theta_02 <- function(x) {
@@ -126,7 +126,7 @@ post_theta_02 <- function(x) {
   predict(d02, x)
 }
 
-# Bivariate posterior densities theta_1-theta_2
+# Bivariate posterior densities (theta_1,theta_2)
 d12 <- densityMclust(MCMC_logistic[,c(2,3)])
 
 post_theta_12 <- function(x) {
@@ -168,11 +168,11 @@ save(d0, d1, d2, d01, d02, d12, d012,
 
 ## Laplace and skew-modal approximations
 
-Let us now obtain both the Gaussian Laplace and the skew-modal approximations of the posterior distribution.This process involves the computation of the posterior mode (MAP), of the observed information and of the third log-likelihood derivative.
+Let us now obtain both the Gaussian Laplace and the skew-modal approximations of the posterior distribution. This process involves the computation of the posterior mode (MAP), of the observed Fisher information and of the third log-likelihood derivative.
 
 ### Evaluation of the posterior mode
 
-To obtain the MAP estimate, it is sufficient to maximise the posterior distribution using the `R` function `optim()`. We do this by clearing the global environment, loading the `mvtnorm` library and defining the function `log_post()`, which corresponds to the posterior distribution as defined in section 5.2 of the main paper.
+To obtain the MAP estimate, it is sufficient to maximise the posterior distribution using the `R` function `optim()`. We do this by clearing the global environment, loading the `mvtnorm` library and defining the function `log_post()`, which corresponds to the posterior distribution induced by the model under analysis.
 
 ```r
 # Clear the workspace by removing all objects
@@ -208,11 +208,11 @@ map <- optim(rep(0, d), function(k) -log_post(k), method = "BFGS")
 
 ### Log-likelihood derivatives
 
-Let us now define the two functions to compute the observed information and the third log-likelihood derivative. As described in the main paper, these quantities, evaluated at the MAP are needed to obtain both Laplace and skew-modal approximations.
+Let us now define the two functions to compute the observed Fisher information and the third log-likelihood derivative. As described in the main paper, these quantities, evaluated at the MAP are needed to obtain both Gaussian Laplace and skew-modal approximations.
 
 ```r
 
-# Define observed information (negative second derivative of the log-likelihood)
+# Define the observed Fisher information (negative second derivative of the log-likelihood)
 obs_inf <- function(theta) {
   eta <- X %*% theta  # Linear predictor
   dp_eta <- c(exp(eta) / (1 + exp(eta))^2) * diag(n)  # First derivative of the log-likelihood
@@ -238,10 +238,10 @@ trd_derivative <- function(theta) {
 
 ### Gaussian Laplace approximations
 
-At this point it is possible to obtain the joint, bivariate and marginal Gaussian Laplace approximations of the posterior density by writing
+At this point it is possible to obtain the joint, bivariates and marginals of the Gaussian Laplace approximation of the posterior density by writing:
 
 ```r
-# Compute the observed information matrix at MAP
+# Compute the observed Fisher information matrix at MAP
 obsInf <- obs_inf(map$par)
 
 # Define parameters for the Laplace approximation
@@ -249,22 +249,22 @@ la <- list()
 la$m <- map$par  # MAP estimate of the parameters
 la$V <- solve(obsInf)  # Covariance matrix from the observed information
 
-# Joint Gaussian Laplace approximation
+# Joint Gaussian Laplace approximation (theta_0,theta_1,theta_2)
 la_theta012 <- function(theta) {
   mvtnorm::dmvnorm(theta, mean = la$m, sigma = la$V)
 }
 
-# Biavariate Gaussian Laplace approximation theta_0-theta1
+# Bivariate Gaussian Laplace approximation (theta_0,theta1)
 la_theta_01 <- function(theta) {
   mvtnorm::dmvnorm(theta, mean = la$m[c(1, 2)], sigma = la$V[c(1, 2), c(1, 2)])
 }
 
-# Biavariate Gaussian Laplace approximation theta_0-theta2
+# Bivariate Gaussian Laplace approximation (theta_0,theta2)
 la_theta_02 <- function(theta) {
   mvtnorm::dmvnorm(theta, mean = la$m[c(1, 3)], sigma = la$V[c(1, 3), c(1, 3)])
 }
 
-# Biavariate Gaussian Laplace approximation theta_1-theta2
+# Bivariate Gaussian Laplace approximation (theta_1,theta2)
 la_theta_12 <- function(theta) {
   mvtnorm::dmvnorm(theta, mean = la$m[c(2, 3)], sigma = la$V[c(2, 3), c(2, 3)])
 }
@@ -285,7 +285,7 @@ la_theta_2 <- function(theta) {
 }
 ```
 
-We save these approximations for future use by writing 
+We now save these approximations for future use. 
 
 ```r
 # Save the Laplace approximations
@@ -294,7 +294,7 @@ save(la, la_theta012, la_theta_01, la_theta_02, la_theta_12, la_theta_0, la_thet
 
 ### Skew-modal approximations
 
-To obtain joint, bivariate and marginals skew-modal approximations of the posterior distribution we follow the expressions reported in Sections 4.1-4.2 of the main paper. As a first step we obtain the $d^3$-dimensional array of  third log-likelihood derivatives evaluated at the MAP.
+To obtain joint, bivariates and marginals of the proposed skew-modal approximation of the posterior distribution we follow the expressions reported in Sections 4.1-4.2 of the main paper. As a first step we obtain the $d^3$-dimensional array of  third log-likelihood derivatives evaluated at the MAP.
 
 ```r
 # Third log-likelihood derivatives evaluated at
@@ -396,11 +396,11 @@ coef_marginal <- function(loc, a2, a3)
 }
 ```
 
-Let us now obtain the joint, bivariate and marginal skew-modal approximations of the posterior density. As with the Laplace approximation, the resulting function are saved for future use. 
+Let us now obtain the joint, bivariates and marginals of the skew-modal approximation of the posterior density. As with the Gaussian Laplace approximation, the resulting function are saved for future use. 
 
 ```r
 
-# Joint skew-symmetric approximation
+# Joint skew-symmetric approximation (theta_0,theta_1,theta_2)
 ske_sym_012 <- function(theta)
 {
   centered <- (theta-la$m)
@@ -419,7 +419,7 @@ ske_sym_012 <- function(theta)
   2*mvtnorm::dmvnorm(theta, mean = la$m, sigma = la$V)*pnorm(skewness)
 }
 
-# Bivariate skew-modal theta_0-theta_1
+# Bivariate skew-modal (theta_0,theta_1)
 coef_01 <- coef_marginal(c(1,2),la$V, nu_ttt)
 ske_sym_01 <- function(theta)
 {
@@ -439,7 +439,7 @@ ske_sym_01 <- function(theta)
   2*mvtnorm::dmvnorm(theta, mean = la$m[c(1,2)], sigma = la$V[c(1,2),c(1,2)])*pnorm(skewness)
 }
 
-# Bivariate skew-modal theta_0-theta_2
+# Bivariate skew-modal (theta_0,theta_2)
 
 coef_02 <- coef_marginal(c(1,3),la$V, nu_ttt)
 ske_sym_02 <- function(theta)
@@ -460,7 +460,7 @@ ske_sym_02 <- function(theta)
   2*mvtnorm::dmvnorm(theta, mean =  la$m[c(1,3)], sigma = la$V[c(1,3),c(1,3)])*pnorm(skewness)
 }
 
-# Bivariate skew-modal theta_1-theta_2
+# Bivariate skew-modal (theta_1,theta_2)
 
 coef_12 <- coef_marginal(c(2,3),la$V, nu_ttt)
 
@@ -522,12 +522,12 @@ save(la,nu_ttt,coef_01,coef_02,coef_12,coef_0, coef_1, coef_2,
 ```
 
 ## Mean-field gaussian variational Bayes approximation
-The study in Section 5.2 of the main paper also reports on the performance of two other common Gaussian approximations, mean-field variational Bayes and Gaussian expectation propagation. This section provides the code to implement the former. To do it, we use the code developed by Durante and Rigon (2019), which can be obtained by downloading the file `logistic.R` from `https://github.com/tommasorigon/logisticVB`. Once this is done, the mean and the covariance matrix of the mean field approximation are obtained using the following code.
+In the Supplementary Material (Table E.4) we study also the performance of two other common Gaussian approximations, namely, **mean-field variational Bayes** and **Gaussian expectation propagation**. This section provides the code to implement the former. To do it, we use the code developed by Durante and Rigon (2019), which can be obtained by downloading the source file `logistic.R` from `https://github.com/tommasorigon/logisticVB`. Once this source file has been saved into the current working directory, the mean and the covariance matrix of the mean field approximation are obtained using the following code.
 
 ```r
 rm(list = ls())
 
-# Loading the necessary functions from the file Logistic.R
+# Loading the necessary functions from the file logistic.R
 source("logistic.R")
 
 # Load data
@@ -539,7 +539,7 @@ load("Cushings.RData")
 prior <- list(mu = rep(0,3), Sigma = diag(25,3))
 
 # Parameter settings
-iter    <- 10^4  # Number of iterations
+iter    <- 10^4  # Number of CAVI iterations
 tau     <- 1     # Delay parameter
 kappa   <- 0.75  # Forgetting rate parameter
 
@@ -550,28 +550,28 @@ mf$m <- paramsMF$mu
 mf$V <- paramsMF$Sigma
 ```
 
-To obtain the joint, bivariate and marginal mean-field approximations of the posterior density write
+To obtain the joint, bivariates and marginals of the mean-field approximation of the posterior density write:
 
 ```r
-# Joint MF approximation
+# Joint MF approximation (theta_0,theta_1,theta_2)
 mf_theta012 <- function(param)
 {
   mvtnorm::dmvnorm(param, mean = mf$m, sigma = mf$V)
 }
 
-# Bivariate MF approximation theta_0-theta_1
+# Bivariate MF approximation (theta_0,theta_1)
 mf_theta_01 <- function(param)
 {
   mvtnorm::dmvnorm(param, mean = mf$m[c(1,2)], sigma = mf$V[c(1,2),c(1,2)])
 }
 
-# Bivariate MF approximation theta_0-theta_2
+# Bivariate MF approximation (theta_0,theta_2)
 mf_theta_02 <- function(param)
 {
   mvtnorm::dmvnorm(param, mean = mf$m[c(1,3)], sigma = mf$V[c(1,3),c(1,3)])
 }
 
-# Bivariate MF approximation theta_1-theta_2
+# Bivariate MF approximation (theta_1,theta_2)
 mf_theta_12 <- function(param)
 {
   mvtnorm::dmvnorm(param, mean = mf$m[c(2,3)], sigma = mf$V[c(2,3),c(2,3)])
