@@ -743,7 +743,7 @@ diff_la012 <- function(x)
 
 tv_la <- apply(simulated_ex,1,diff_la012)
 
-# TV distance joint posterior vs skew-symmetric
+# TV distance joint posterior vs skew-modal
 diff_ske012 <- function(x)
 {
   1/2 * abs( ske_sym_012(x) - post_theta_012(x))/mvtnorm::dmvnorm(x, mean = la$m, sigma = 3*diag(diag(la$V)))
@@ -784,7 +784,7 @@ diff_la01 <- function(x)
 
 tv_la01 <- apply(simulated_ex[ ,1:2],1,diff_la01)
 
-# TV bivariate posterior vs skew-symmetric 
+# TV bivariate posterior vs skew-modal 
 
 diff_ske01 <- function(x)
 {
@@ -824,7 +824,7 @@ diff_la02 <- function(x)
 
 tv_la02 <- apply(simulated_ex[ ,c(1,3)],1,diff_la02)
 
-# TV bivariate posterior vs skew-symmetric 
+# TV bivariate posterior vs skew-modal 
 
 diff_ske02 <- function(x)
 {
@@ -864,7 +864,7 @@ diff_la12 <- function(x)
 
 tv_la12 <- apply(simulated_ex[ ,c(2,3)],1,diff_la12)
 
-# TV bivariate posterior vs skew-symmetric
+# TV bivariate posterior vs skew-modal
 
 diff_ske12 <- function(x)
 {
@@ -904,7 +904,7 @@ diff_la0 <- function(x)
 
 tv_la0 <- diff_la0(simulated_ex[ ,1])
 
-# TV marginal posterior vs skew-symmetric
+# TV marginal posterior vs skew-modal
 
 diff_ske0 <- function(x)
 {
