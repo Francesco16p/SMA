@@ -1114,7 +1114,7 @@ HPD_err_la095 <- mean( abs(HPDinterval(as.mcmc(sim_la,0.95)) - HPDinterval(as.mc
 HPD_err095 <- c(HPD_err_ske095,HPD_err_la095)
 names(HPD_err095) <- c("Skew-modal", "Laplace")
 ```
-A table containing the results for all values of $\alpha$ can be obtained writing
+A table containing the results can be obtained writing:
 ```r
 # Final table
 round(HPD_err095,2)
