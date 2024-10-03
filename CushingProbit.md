@@ -11,8 +11,6 @@ We first define a STAN model that estimates a Bayesian probit regression with `y
 ```
 rm(list = ls())
 
-// Probit regression with STAN
-
 stan_model_file <- 'data{
     int<lower=0> N; // number of observations
     int<lower=0> D; // number of predictors
