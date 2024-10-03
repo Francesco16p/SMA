@@ -28,7 +28,7 @@ model {
     theta ~ normal(0, sd);
     // Likelihood
     y ~ bernoulli(Phi(X * theta));  // Using probit link
-}
+}'
 
 ```
 
