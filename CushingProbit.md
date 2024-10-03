@@ -388,7 +388,7 @@ Let us now obtain the joint, bivariates and marginals of the skew-modal approxim
 
 ```r
 
-# Joint skew-symmetric approximation
+# Joint skew-modal approximation (theta_0,theta_1,theta_2)
 ske_sym_012_probit <- function(theta)
 {
   centered <- (theta-la_probit$m)
@@ -407,7 +407,7 @@ ske_sym_012_probit <- function(theta)
   2*mvtnorm::dmvnorm(theta, mean = la_probit$m, sigma = la_probit$V)*pnorm(skewness)
 }
 
-## bivariate skew-modal theta_0-theta_1
+# Bivariate skew-modal (theta_0,theta_1)
 coef_01_probit <- coef_marginal(c(1,2),la_probit$V, nu_ttt_probit)
 ske_sym_01_probit <- function(theta)
 {
@@ -427,7 +427,7 @@ ske_sym_01_probit <- function(theta)
   2*mvtnorm::dmvnorm(theta, mean = la_probit$m[c(1,2)], sigma = la_probit$V[c(1,2),c(1,2)])*pnorm(skewness)
 }
 
-# bivariate skew-modal theta_0-theta_2
+# Bivariate skew-modal (theta_0,theta_2)
 
 coef_02_probit <- coef_marginal(c(1,3),la_probit$V, nu_ttt_probit)
 ske_sym_02_probit <- function(theta)
@@ -448,7 +448,7 @@ ske_sym_02_probit <- function(theta)
   2*mvtnorm::dmvnorm(theta, mean =  la_probit$m[c(1,3)], sigma = la_probit$V[c(1,3),c(1,3)])*pnorm(skewness)
 }
 
-# bivariate skew-modal theta_1-theta_2
+# Bivariate skew-modal (theta_1,theta_2)
 
 coef_12_probit <- coef_marginal(c(2,3),la_probit$V, nu_ttt_probit)
 
@@ -470,7 +470,7 @@ ske_sym_12_probit <- function(theta)
   2*mvtnorm::dmvnorm(theta, mean = la_probit$m[c(2,3)], sigma = la_probit$V[c(2,3),c(2,3)])*pnorm(skewness)
 }
 
-# marginal skew-modal theta_0 
+# Marginal skew-modal theta_0 
 
 coef_0_probit <- coef_marginal(1,la_probit$V, nu_ttt_probit)
 
@@ -481,7 +481,7 @@ ske_sym_0_probit <- function(theta)
   2*dnorm(theta, mean = la_probit$m[1], sd = sqrt(la_probit$V[1,1]))*pnorm(skewness)
 }
 
-# marginal skew-modal theta_1
+# Marginal skew-modal theta_1
 
 coef_1_probit <- coef_marginal(2,la_probit$V, nu_ttt_probit)
 
@@ -492,7 +492,7 @@ ske_sym_1_probit <- function(theta)
   2*dnorm(theta, mean = la_probit$m[2], sd = sqrt(la_probit$V[2,2]))*pnorm(skewness)
 }
 
-# marginal skew-modal theta_2
+# Marginal skew-modal theta_2
 
 coef_2_probit <- coef_marginal(3,la_probit$V, nu_ttt_probit)
 
@@ -511,14 +511,13 @@ save(la_probit,nu_ttt_probit,coef_01_probit,coef_02_probit,
      ske_sym_1_probit,ske_sym_2_probit, file="Probit_SkewM_approx.RData")
 ```
 
-## Mean-field gaussian variational Bayes approximation
-Section 5.2 of the main paper reports also the performance of three other approximations, Gaussian mean field variational bayes, partially factorized variational approximation and Gaussian expectation propagation. This section provides the code to obtain the former. To implement the approximation, we use the code developed by Fasano, Durante and Zanella (2022), which can be obtained by downloading the file `functionsVariational.R` at `https://github.com/augustofasano/Probit-PFMVB`. Once this is done, the mean and the covariance matrix of the mean-field approximation are obtained with the following code.
+##  Mean-field Gaussian variational Bayes approximation
+In the Supplementary Material (Table E.4) we study also the performance of three other approximations, Gaussian mean-field variational Bayes, partially factorized variational Bayes and Gaussian expectation propagation. This section provides the code to obtain the former. To implement the approximation, we use the code developed by Fasano, Durante and Zanella (2022), which can be obtained by downloading the source file `functionsVariational.R` at `https://github.com/augustofasano/Probit-PFMVB`.  Once this source file has been saved into the current working directory, the mean and the covariance matrix of the mean-field approximation are obtained using the following code.
 
 ```r
 rm(list = ls())
 
 # load the necessary functions from the file functionsVariational.R
-
 source("functionsVariational.R")
 
 # load data
@@ -537,10 +536,10 @@ mf_probit$m <- paramsMF$meanBeta
 mf_probit$V <- diag(paramsMF$diagV)
 ```
 
-To obtain the joint, bivariate and marginal mean-field approximations of the posterior density write
+To obtain the joint, bivariates and marginals of the mean-field approximation of the posterior density write:
 
 ```r
-# Joint MF approximation
+# Joint MF approximation (theta_0,theta_1,theta_2)
 mf_theta012_probit <- function(param)
 {
   mvtnorm::dmvnorm(param, mean = mf_probit$m, sigma = mf_probit$V)
@@ -552,13 +551,13 @@ mf_theta_01_probit <- function(param)
   mvtnorm::dmvnorm(param, mean = mf_probit$m[c(1,2)], sigma = mf_probit$V[c(1,2),c(1,2)])
 }
 
-# Bivariate MF approximation theta_0-theta_2
+# Bivariate MF approximation (theta_0,theta_2)
 mf_theta_02_probit <- function(param)
 {
   mvtnorm::dmvnorm(param, mean = mf_probit$m[c(1,3)], sigma = mf_probit$V[c(1,3),c(1,3)])
 }
 
-# Bivariate MF approximation theta_1-theta_2
+# Bivariate MF approximation (theta_1,theta_2)
 mf_theta_12_probit <- function(param)
 {
   mvtnorm::dmvnorm(param, mean = mf_probit$m[c(2,3)], sigma = mf_probit$V[c(2,3),c(2,3)])
@@ -591,13 +590,14 @@ save(mf_probit, mf_theta012_probit,mf_theta_01_probit,
      mf_theta_0_probit,mf_theta_1_probit,mf_theta_2_probit,
      file="Probit_MF_approx.RData")
 ```
-## Partially factorized mean field approximation
-To obtain the partially factorized mean field approximation, we use as for the mean field approximation the code `functionsVariational.R` developed by Fasano, Durante and Zanella (2022).
+
+## Partially factorized mean-field variational Bayes
+To obtain the partially factorized mean-field approximation, we use as for the mean-field approximation the source code `functionsVariational.R` developed by Fasano, Durante and Zanella (2022).
 
 ```r
 rm(list = ls())
 
-# loadthe necessary functions
+# load the necessary functions
 library(truncnorm)
 library(mclust)
 source("functionsVariational.R")
@@ -612,14 +612,8 @@ tolerance <- 1e-3 # tolerance to establish ELBO convergence
 # estimate the approximation
 paramsSMF = getParamsPFM(X=X,y=y,nu2=nu2,moments =TRUE, 
                          tolerance=tolerance,maxIter=1e4)
-
-# sample from approximate partially-factorized approximation
-set.seed(1)
-simulated_pfvb <- sampleSUN_PFM(paramsPFM=paramsSMF,X=X,y=y,nu2=nu2,
-                               nSample=10^4)
-simulated_pfvb <- t(simulated_pfvb)
 ```
-To sample from the approximation write
+To sample from the approximation write:
 ```r
 # sample from approximate partially-factorized approximation
 set.seed(1) # set seed for reproducibility
@@ -627,10 +621,10 @@ simulated_pfvb <- sampleSUN_PFM(paramsPFM=paramsSMF,X=X,y=y,nu2=nu2,
                                nSample=10^4)
 simulated_pfvb <- t(simulated_pfvb)
 ```
-We then estimate the densities of the joint, bivariate and marginal partially factorised approximations using the `mclust` library as it was done for the posterior distribution.
+We then estimate the densities of the joint, bivariates and marginals of the partially factorised mean-field approximations using the `mclust` library as it was done for the posterior distribution.
 
 ```r
-# Estimated joint PFVB approximation
+# Estimated joint PFVB approximation (theta_0,theta_1,theta_2)
 
 d012pfvb <- densityMclust( simulated_pfvb[,1:3])
 pfvb_theta012 <- function(param)
@@ -639,7 +633,7 @@ pfvb_theta012 <- function(param)
   predict(d012pfvb, param)
 }
 
-# Estimated bivariate PFVB approximation theta_0-theta_1
+# Estimated bivariate PFVB approximation (theta_0,theta_1)
 
 d01pfvb <- densityMclust( simulated_pfvb[,1:2])
 
@@ -649,7 +643,7 @@ pfvb_theta_01 <- function(param)
   predict(d01pfvb, param)
 }
 
-# Estimated bivariate PFVB approximation theta_0-theta_2
+# Estimated bivariate PFVB approximation (theta_0,theta_2)
 
 d02pfvb <- densityMclust( simulated_pfvb[,c(1,3)])
 
@@ -659,7 +653,7 @@ pfvb_theta_02 <- function(param)
   predict(d02pfvb, param)
 }
 
-# Estimated bivariate PFVB approximation theta_1-theta_2
+# Estimated bivariate PFVB approximation (theta_1,theta_2)
 
 d12pfvb <- densityMclust( simulated_pfvb[,c(2,3)])
 
@@ -709,13 +703,10 @@ save(d012pfvb, d01pfvb,d02pfvb,d12pfvb,d0pfvb,d1pfvb,d2pfvb,
 
 ## Gaussian expectation propagation
 
-As a last approximation, we consider Gaussian expectation propagation. This approximation can be obtained using the Julia `GaussianEP` package (Barthelmé, 2024) which can be downloaded at `https://github.com/dahtah/GaussianEP.jl`. The following Julia code loads the quantities required for the approximation, obtains an estimate of the mean and the covariance matrix, and finally saves them for later use in the R environment. 
+As a last approximation, we consider Gaussian expectation propagation (EP). This approximation can be obtained using the Julia GaussianEP package (Barthelmé, 2024) downloadable at https://github.com/dahtah/GaussianEP.jl. For this reason, the code below must be run in the Julia environment (which can be dowloaded at https://julialang.org/downloads/). In particular, open Julia and then run the following code to load the quantities required for the approximation, obtain an estimate of the mean and the covariance matrix of the Gaussian EP approximation, and finally save these quantities for use in the R environment. 
 
 ```julia
-
-# EP approximation Probit regression
-# Load the required libraries
-
+# Load needed packages
 using Pkg
 Pkg.add("RCall")
 Pkg.build("RCall")
@@ -734,8 +725,8 @@ using Distributions
 using DelimitedFiles
 
 # Use the R interface to retrive the Cushings dataset using the function file.choose()
-# To run the code specifies the path of Cushings.RData
-R"Rdata <- load('C:/Users/franc/Documents/Francesco/ProbitCushing/Cushings.RData')"
+# To run the code specify in [...] the path of Cushings.RData
+R"Rdata <- load('.../Cushings.RData')"
 @rget y;  @rget X;
 
 # Epglm logit model
@@ -750,7 +741,7 @@ end
 
 G = ep_glm(X,y1,Probit(),τ=1/5^2) #EP estimation 
 
-# saves the results in ProbitCushing
+# to save in LogitCushing specify in [...] the path of the LogitCushing directory
 m_ep_probit = mean(G)
 cova_ep_probit = cov(G)
 file_path1 = ".../mean_ep_probit"
@@ -758,7 +749,7 @@ file_path2 = ".../cov_ep_probit"
 writedlm(file_path1, m_ep_probit, ',')
 writedlm(file_path2, cova_ep_probit, ',')
 ```
-Once the mean and the covariance matrix are obtained, it is possible to use the new approximation in the `R` environment and to define the joint, bivariate and marginal Gaussian expectation propagation approximations as for the other approximations considered above.
+At this point, it is possible to use the new approximation in the R environment and define the joint, bivariates and marginals of the Gaussian EP approximation as done for the other approximations considered above.
 
 ```r
 rm(list = ls())
@@ -772,25 +763,25 @@ cov_ep_probit <- as.matrix(read.csv("cov_ep_probit", header = F, sep = ","))
 
 # Joint, bivariates and marginal EP approximations can be obtained as follows
 
-# Joint EP approximation
+# Joint EP approximation (theta_0,theta_1,theta_2)
 ep_theta012_probit <- function(theta)
 {
   mvtnorm::dmvnorm(theta, mean = m_ep_probit, sigma = cov_ep_probit)
 }
 
-# Bivariate EP approximation theta_0-theta_1
+# Bivariate EP approximation (theta_0,theta_1)
 ep_theta_01_probit <- function(theta)
 {
   mvtnorm::dmvnorm(theta, mean = m_ep_probit[c(1,2)], sigma = cov_ep_probit[c(1,2),c(1,2)])
 }
 
-# Bivariate EP approximation theta_0-theta_2
+# Bivariate EP approximation (theta_0,theta_2)
 ep_theta_02_probit <- function(theta)
 {
   mvtnorm::dmvnorm(theta, mean = m_ep_probit[c(1,3)], sigma = cov_ep_probit[c(1,3),c(1,3)])
 }
 
-# Bivariate EP approximation theta_1-theta_2
+# Bivariate EP approximation (theta_1,theta_2)
 ep_theta_12_probit <- function(theta)
 {
   mvtnorm::dmvnorm(theta, mean = m_ep_probit[c(2,3)], sigma = cov_ep_probit[c(2,3),c(2,3)])
@@ -823,9 +814,9 @@ save(m_ep_probit,cov_ep_probit, ep_theta012_probit,ep_theta_01_probit,
 
 ## Total variation distance between posterior distribution and different approximations
 
-This section completes the work done in the previous part of the notebook by providing importance sampling estimates of the distance in total variation between the joint, bivariate and marginal posterior distributions and their corresponding approximations. The importance sampling estimate is obtained by using as reference distributions independent Gaussians with mean the MAP and covariance matrix equal to the diagonal component of the inverse observed information inflated by 3 to guarantee the stability of the results. 
+This section completes the work done in the previous part of the notebook by providing importance sampling estimates of the distance in total variation between the joint, bivariates and marginals of the target posterior density and their corresponding approximations. The importance sampling estimate is obtained by using as reference distributions independent Gaussians with mean the MAP and covariance matrix equal to the diagonal component of the inverse observed Fisher information inflated by 3 to guarantee the stability of the results.
 
-We start by cleaning up the working environment, loading the approximations and sampling from the reference density that will be used to implement importance sampling.
+We start by cleaning the working environment, loading the approximations, and sampling from the reference density that will be used to implement importance sampling.
 
 ```r
 rm(list = ls())
@@ -851,7 +842,7 @@ simulated_ex <- rmvnorm(10^4, mean = la_probit$m, sigma = 3*diag(diag(la_probit$
 
 Once this procedure is complete, it is possible to proceed by computing the importance sampling estimates.
 
-### TV errors joint posterior
+### TV errors joint posterior $(\theta_0,\theta_1,\theta_2)$  
 
 ```r
 # TV distance joint posterior vs Laplace
@@ -863,7 +854,7 @@ diff_la012 <- function(x)
 
 tv_la <- apply(simulated_ex,1,diff_la012)
 
-# TV distance joint posterior vs skew-symmetric
+# TV distance joint posterior vs skew-modal
 diff_ske012 <- function(x)
 {
   1/2 * abs( ske_sym_012_probit(x) - post_theta_012_probit(x))/mvtnorm::dmvnorm(x, mean = la_probit$m, sigma = 3*diag(diag(la_probit$V)))
@@ -901,10 +892,10 @@ diff_pfvb012 <- function(x)
 tv_pfvb <- apply(simulated_ex,1,diff_pfvb012)
 
 ```
-### TV errors bivariate posterior $\theta_0-\theta_1$ 
+### TV errors bivariate posterior $(\theta_0,\theta_1)$ 
 
 ```r
-# TV bivariate posterior theta_0-theta_1 posterior vs Laplace 
+# TV bivariate posterior vs Laplace 
 
 diff_la01 <- function(x)
 {
@@ -913,7 +904,7 @@ diff_la01 <- function(x)
 
 tv_la01 <- apply(simulated_ex[ ,1:2],1,diff_la01)
 
-# TV bivariate posterior theta_0-theta_1 posterior vs skew-symmetric 
+# TV bivariate posterior vs skew-modal 
 
 diff_ske01 <- function(x)
 {
@@ -922,7 +913,7 @@ diff_ske01 <- function(x)
 
 tv_ske01 <- apply(simulated_ex[,1:2],1,diff_ske01)
 
-# TV bivariate posterior theta_0-theta_1 posterior vs EP 
+# TV bivariate posterior vs EP 
 
 diff_ep01 <- function(x)
 {
@@ -932,7 +923,7 @@ diff_ep01 <- function(x)
 tv_ep01 <- apply(simulated_ex[ ,1:2],1,diff_ep01)
 
 
-# TV bivariate posterior theta_0-theta_1 posterior vs MF
+# TV bivariate posterior vs MF
 
 diff_mf01 <- function(x)
 {
@@ -941,7 +932,7 @@ diff_mf01 <- function(x)
 
 tv_mf01 <- apply(simulated_ex[ ,1:2],1,diff_mf01)
 
-# TV bivariate posterior theta_0-theta_1 posterior vs PFVB
+# TV bivariate posterior vs PFVB
 
 diff_pfvb01 <- function(x)
 {
@@ -950,10 +941,10 @@ diff_pfvb01 <- function(x)
 
 tv_pfvb01 <- apply(simulated_ex[ ,1:2],1,diff_pfvb01)
 ```
-## TV errors bivariate posterior $\theta_0-\theta_2$
+## TV errors bivariate posterior $(\theta_0,\theta_2)$
 
 ```r
-# TV bivariate posterior theta_0-theta_2 posterior vs Laplace
+# TV bivariate posterior vs Laplace
 
 diff_la02 <- function(x)
 {
@@ -962,7 +953,7 @@ diff_la02 <- function(x)
 
 tv_la02 <- apply(simulated_ex[ ,c(1,3)],1,diff_la02)
 
-# TV bivariate posterior theta_0-theta_2 posterior vs skew-symmetric 
+# TV bivariate posterior vs skew-modal 
 
 diff_ske02 <- function(x)
 {
@@ -971,7 +962,7 @@ diff_ske02 <- function(x)
 
 tv_ske02 <- apply(simulated_ex[,c(1,3)],1,diff_ske02)
 
-# TV bivariate posterior theta_0-theta_2 posterior vs EP 
+# TV bivariate posterior vs EP 
 
 diff_ep02 <- function(x)
 {
@@ -980,7 +971,7 @@ diff_ep02 <- function(x)
 
 tv_ep02 <- apply(simulated_ex[ ,c(1,3)],1,diff_ep02)
 
-# TV bivariate posterior theta_0-theta_2 posterior vs MF 
+# TV bivariate posterior vs MF 
 
 diff_mf02 <- function(x)
 {
@@ -989,7 +980,7 @@ diff_mf02 <- function(x)
 
 tv_mf02 <- apply(simulated_ex[ ,c(1,3)],1,diff_mf02)
 
-# TV bivariate posterior theta_0-theta_2 posterior vs PFVB
+# TV bivariate posterior vs PFVB
 
 diff_pfvb02 <- function(x)
 {
@@ -999,10 +990,10 @@ diff_pfvb02 <- function(x)
 tv_pfvb02 <- apply(simulated_ex[ ,c(1,3)],1,diff_pfvb02)
 ```
 
-### TV errors bivariate posterior $\theta_1-\theta_2$ 
+### TV errors bivariate posterior $(\theta_1,\theta_2)$ 
 
 ```r
-# TV bivariate posterior theta_1-theta_2 posterior vs Laplace
+# TV bivariate posterior vs Laplace
 
 diff_la12 <- function(x)
 {
@@ -1011,7 +1002,7 @@ diff_la12 <- function(x)
 
 tv_la12 <- apply(simulated_ex[ ,c(2,3)],1,diff_la12)
 
-# TV bivariate posterior theta_1-theta_2 posterior vs skew-symmetric
+# TV bivariate posterior vs skew-modal
 
 diff_ske12 <- function(x)
 {
@@ -1020,7 +1011,7 @@ diff_ske12 <- function(x)
 
 tv_ske12 <- apply(simulated_ex[ ,c(2,3)],1,diff_ske12)
 
-# TV bivariate posterior theta_1-theta_2 posterior vs EP
+# TV bivariate posterior vs EP
 
 diff_ep12 <- function(x)
 {
@@ -1029,7 +1020,7 @@ diff_ep12 <- function(x)
 
 tv_ep12 <- apply(simulated_ex[ ,c(2,3)],1,diff_ep12)
 
-# TV bivariate posterior theta_1-theta_2 posterior vs MF
+# TV bivariate posterior vs MF
 
 diff_mf12 <- function(x)
 {
@@ -1038,7 +1029,7 @@ diff_mf12 <- function(x)
 
 tv_mf12 <- apply(simulated_ex[ ,c(2,3)],1,diff_mf12)
 
-# TV bivariate posterior theta_1-theta_2 posterior vs MF
+# TV bivariate posterior vs PFVB
 
 diff_pfvb12 <- function(x)
 {
@@ -1050,7 +1041,7 @@ tv_pfvb12 <- apply(simulated_ex[ ,c(2,3)],1,diff_pfvb12)
 ### TV errors marginal posterior $\theta_0$
 
 ```r
-# TV marginal posterior theta_0 posterior vs Laplace
+# TV marginal posterior vs Laplace
 
 diff_la0 <- function(x)
 {
@@ -1059,7 +1050,7 @@ diff_la0 <- function(x)
 
 tv_la0 <- diff_la0(simulated_ex[ ,1])
 
-# TV marginal posterior theta_0 posterior vs skew-symmetric
+# TV marginal posterior skew-modal
 
 diff_ske0 <- function(x)
 {
@@ -1068,7 +1059,7 @@ diff_ske0 <- function(x)
 
 tv_ske0 <- diff_ske0(simulated_ex[ ,1])
 
-# TV marginal posterior theta_0 posterior vs EP
+# TV marginal posterior vs EP
 
 diff_ep0 <- function(x)
 {
@@ -1077,7 +1068,7 @@ diff_ep0 <- function(x)
 
 tv_ep0 <- diff_ep0(simulated_ex[ ,1])
 
-# TV marginal posterior theta_0 posterior vs MF
+# TV marginal posterior vs MF
 
 diff_mf0 <- function(x)
 {
@@ -1086,7 +1077,7 @@ diff_mf0 <- function(x)
 
 tv_mf0 <- diff_mf0(simulated_ex[ ,1])
 
-# TV marginal posterior theta_0 posterior vs PFVB
+# TV marginal posterior vs PFVB
 
 diff_pfvb0 <- function(x)
 {
@@ -1100,7 +1091,7 @@ tv_pfvb0 <- diff_pfvb0(simulated_ex[ ,1])
 ### TV errors marginal posterior $\theta_1$
 
 ```r
-# TV marginal posterior theta_1 posterior vs Laplace 
+# TV marginal posterior vs Laplace 
 
 diff_la1 <- function(x)
 {
@@ -1109,7 +1100,7 @@ diff_la1 <- function(x)
 
 tv_la1 <- diff_la1(simulated_ex[ ,2])
 
-# TV marginal posterior theta_1 posterior vs skew-modal
+# TV marginal posterior vs skew-modal
 
 diff_ske1 <- function(x)
 {
@@ -1118,7 +1109,7 @@ diff_ske1 <- function(x)
 
 tv_ske1 <- diff_ske1(simulated_ex[,2])
 
-# TV marginal posterior theta_1 posterior vs EP
+# TV marginal posterior vs EP
 
 diff_ep1 <- function(x)
 {
@@ -1127,7 +1118,7 @@ diff_ep1 <- function(x)
 
 tv_ep1 <- diff_ep1(simulated_ex[ ,2])
 
-# TV marginal posterior theta_1 posterior vs MF 
+# TV marginal posterior vs MF 
 
 diff_mf1 <- function(x)
 {
@@ -1136,7 +1127,7 @@ diff_mf1 <- function(x)
 
 tv_mf1 <- diff_mf1(simulated_ex[ ,2])
 
-# TV marginal posterior theta_1 posterior vs PFVB 
+# TV marginal posterior vs PFVB 
 
 diff_pfvb1 <- function(x)
 {
@@ -1149,7 +1140,7 @@ tv_pfvb1 <- diff_pfvb1(simulated_ex[ ,2])
 ### TV errors marginal posterior $\theta_2$ 
 
 ```r
-# TV marginal posterior theta_2 posterior vs Laplace 
+# TV marginal posterior vs Laplace 
 
 diff_la2 <- function(x)
 {
@@ -1158,7 +1149,7 @@ diff_la2 <- function(x)
 
 tv_la2 <- diff_la2(simulated_ex[ ,3])
 
-# TV marginal posterior theta_2 posterior vs skew-modal
+# TV marginal posterior vs skew-modal
 
 diff_ske2 <- function(x)
 {
@@ -1167,7 +1158,7 @@ diff_ske2 <- function(x)
 
 tv_ske2 <- diff_ske2(simulated_ex[ ,3])
 
-# TV marginal posterior theta_2 posterior vs EP 
+# TV marginal posterior vs EP 
 
 diff_ep2 <- function(x)
 {
@@ -1176,7 +1167,7 @@ diff_ep2 <- function(x)
 
 tv_ep2 <- diff_ep2(simulated_ex[ ,3])
 
-# TV marginal posterior theta_2 posterior vs VB 
+# TV marginal posterior vs VB 
 
 diff_mf2 <- function(x)
 {
@@ -1185,7 +1176,7 @@ diff_mf2 <- function(x)
 
 tv_mf2 <- diff_mf2(simulated_ex[ ,3])
 
-# TV marginal posterior theta_2 posterior vs PFVB 
+# TV marginal posterior vs PFVB 
 
 diff_pfvb2 <- function(x)
 {
@@ -1196,7 +1187,7 @@ tv_pfvb2 <- diff_pfvb2(simulated_ex[ ,3])
 
 ```
 
-Finally, we create the table with the estimated total variation distance that is reported in Table D.4 of the main paper and we save the results.
+Finally we create the table with the estimated total variation distance that is reported in Table E.4 of the Supplementary Material (Table 3 in the main article is a subset of it) and we save the results.
 
 ```r
 # TV estimates
@@ -1212,38 +1203,21 @@ mf_tv <-  c(mean(tv_mf),mean(tv_mf01),mean(tv_mf02),mean(tv_mf12),
 pfvb_tv <-  c(mean(tv_pfvb),mean(tv_pfvb01),mean(tv_pfvb02),mean(tv_pfvb12),
             mean(tv_pfvb0),mean(tv_pfvb1),mean(tv_pfvb2))
 
-# Obtain the standard error associated to each estimate
-
-laplace_tv_sd <-c(var(tv_la),var(tv_la01),var(tv_la02),var(tv_la12),
-                  var(tv_la0), var(tv_la1),var(tv_la2))/10^5
-skew_tv_sd <- c(var(tv_ske),var(tv_ske01),var(tv_ske02),
-                var(tv_ske12),var(tv_ske0),var(tv_ske1),var(tv_ske2))/10^5
-ep_tv_sd <-  c(var(tv_ep),var(tv_ep01),var(tv_ep02),var(tv_ep12),
-               var(tv_ep0),var(tv_ep1),var(tv_ep2))/10^5
-mf_tv_sd <-  c(var(tv_mf),var(tv_mf01),var(tv_mf02),var(tv_mf12),
-               var(tv_mf0),var(tv_mf1),var(tv_mf2))/10^5
-pfvb_tv_sd <-  c(var(tv_pfvb),var(tv_pfvb01),var(tv_pfvb02),var(tv_pfvb12),
-               var(tv_pfvb0),var(tv_pfvb1),var(tv_pfvb2))/10^5
-
 df_tv <- cbind(skew_tv,laplace_tv,ep_tv,mf_tv,pfvb_tv)
-df_tv_sd <- sqrt(cbind(skew_tv_sd,laplace_tv_sd,ep_tv_sd,mf_tv_sd,pfvb_tv_sd))
-
 
 # Transform all the quantities in table form
 
 colnames(df_tv) <- colnames(df_tv_sd) <- c("Skew-Laplace", "Laplace", "EP", "MF", "PFBV")
 rownames(df_tv) <- rownames(df_tv_sd) <- c("Joint","theta01","theta02", "theta12","theta0","theta1","theta2")
 t(round(df_tv,2))
-t(round(df_tv_sd,5))
 
 # Save the results
 
 save(df_tv, file = "Total variation mcmc Probit")
-save(df_tv_sd, file = "Sd Total variation mcmc Probit")
 ```
-## Highest posterior density credible intervals
+## Highest posterior density intervals
 
-We conclude this tutorial by providing code comparing the quality of Laplace and skew-modal approximations in terms of HPD intervals. First we clean the environment, load the necessary quantities and define a function which generates samples from the skew-modal approximation.
+We conclude this tutorial by providing the code to compare the quality of the Gaussian Laplace and skew-modal solutions in terms of accuracy in approximating the HPD intervals of the target posterior. First we clean the environment, load the necessary quantities and define a function which generates samples from the skew-modal approximation.
 ```r
 # Load packages
 rm(list = ls())
@@ -1293,8 +1267,8 @@ ske_sim <- function(nsim)
 }
 ```
 
-To obtain the HPD intervals, we use the HPDinterval() function from the coda library.
-This function requires a sample from the distribution for which the HPD intervals
+To obtain the HPD intervals, we use the `HPDinterval()` function from the `coda` library.
+This function requires a sample from the posterior distribution for which the HPD intervals
 are to be derived. For the posterior, we use the same sample used to estimate the
 posterior densities in the previous part of the notebook, while for the Laplace
 and skew-modal approximations, two samples of dimension 10^4 are obtained.
@@ -1310,24 +1284,6 @@ sim_la <- mvtnorm::rmvnorm(n = nsim,mean = la_probit$m, sigma = la_probit$V)
 
 At this point we can compute the mean absolute difference between the HPD intervals of the probit posterior and the ones of the two approximation.
 
-### $\alpha = 0.8$
-
-```r
-HPD_err_ske08 <- mean( abs(HPDinterval(as.mcmc(sim_ske,0.8)) - HPDinterval(as.mcmc(MCMC_probit),0.8))) 
-HPD_err_la08 <- mean( abs(HPDinterval(as.mcmc(sim_la,0.8)) - HPDinterval(as.mcmc(MCMC_probit),0.8))) 
-
-HPD_err08 <- c(HPD_err_ske08,HPD_err_la08)
-names(HPD_err08) <- c("Skew-modal", "Laplace")
-
-```
-### $\alpha = 0.9$
-```r
-HPD_err_ske09 <- mean( abs(HPDinterval(as.mcmc(sim_ske,0.9)) - HPDinterval(as.mcmc(MCMC_probit),0.9))) 
-HPD_err_la09 <- mean( abs(HPDinterval(as.mcmc(sim_la,0.9)) - HPDinterval(as.mcmc(MCMC_probit),0.9))) 
-
-HPD_err09 <- c(HPD_err_ske09,HPD_err_la09)
-names(HPD_err09) <- c("Skew-modal", "Laplace")
-```
 ### $\alpha = 0.95$
 ```r
 HPD_err_ske095 <- mean( abs(HPDinterval(as.mcmc(sim_ske,0.95)) - HPDinterval(as.mcmc(MCMC_probit),0.95))) 
@@ -1336,7 +1292,7 @@ HPD_err_la095 <- mean( abs(HPDinterval(as.mcmc(sim_la,0.95)) - HPDinterval(as.mc
 HPD_err095 <- c(HPD_err_ske095,HPD_err_la095)
 names(HPD_err095) <- c("Skew-modal", "Laplace")
 ```
-A table containing the results for all values of $\alpha$ can be obtained writing
+A table containing the results can be obtained writing:
 ```r
 # Final table
 round(rbind(HPD_err08,HPD_err09,HPD_err095),2)
