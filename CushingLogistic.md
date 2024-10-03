@@ -1027,6 +1027,8 @@ ep_tv <-  c(mean(tv_ep),mean(tv_ep01),mean(tv_ep02),mean(tv_ep12),
 mf_tv <-  c(mean(tv_mf),mean(tv_mf01),mean(tv_mf02),mean(tv_mf12),
             mean(tv_mf0),mean(tv_mf1),mean(tv_mf2))
 
+df_tv <- cbind(skew_tv,laplace_tv,ep_tv,mf_tv)
+
 # Transform all the quantities in table form
 colnames(df_tv) <- c("Skew-Modal", "Laplace", "EP", "MF")
 rownames(df_tv) <- c("Joint","theta01","theta02", "theta12","theta0","theta1","theta2")
