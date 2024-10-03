@@ -1294,5 +1294,5 @@ names(HPD_err095) <- c("Skew-modal", "Laplace")
 A table containing the results can be obtained writing:
 ```r
 # Final table
-round(rbind(HPD_err08,HPD_err09,HPD_err095),2)
+round(rbind(HPD_err095),2)
 ```
