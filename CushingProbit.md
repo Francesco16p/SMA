@@ -545,7 +545,7 @@ mf_theta012_probit <- function(param)
   mvtnorm::dmvnorm(param, mean = mf_probit$m, sigma = mf_probit$V)
 }
 
-# Bivariate MF approximation theta_0-theta_1
+# Bivariate MF approximation (theta_0,theta_1)
 mf_theta_01_probit <- function(param)
 {
   mvtnorm::dmvnorm(param, mean = mf_probit$m[c(1,2)], sigma = mf_probit$V[c(1,2),c(1,2)])
