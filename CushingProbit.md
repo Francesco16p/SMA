@@ -185,7 +185,7 @@ The observed Fisher information evaluated at MAP is computed directly by the `op
 
 ```r
 
-# Observed information of the model
+# Observed Fisher information of the model
 
 obsInf <-  map_probit$hessian
 
