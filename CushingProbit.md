@@ -741,7 +741,7 @@ end
 
 G = ep_glm(X,y1,Probit(),τ=1/5^2) #EP estimation 
 
-# to save in LogitCushing specify in [...] the path of the LogitCushing directory
+# to save in ProbitCushing specify in [...] the path of the LogitCushing directory
 m_ep_probit = mean(G)
 cova_ep_probit = cov(G)
 file_path1 = ".../mean_ep_probit"
