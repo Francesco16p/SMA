@@ -284,7 +284,7 @@ save(la_probit, la_theta012_probit,la_theta_01_probit,la_theta_02_probit,la_thet
 
 ### Skew-modal approximations
 
-To obtain joint, bivariate and marginal skew-modal approximations of the posterior distribution, we follow the expressions reported in Sections 4.1-4.2 of the main paper. As a first step, we obtain the $d^3$ dimensional array of third log-likelihood derivatives evaluated at the MAP.
+To obtain joint, bivariates and marginals of the proposed skew-modal approximation of the posterior distribution, we follow the expressions reported in Sections 4.1-4.2 of the main paper. As a first step, we obtain the $d^3$-dimensional array of third log-likelihood derivatives evaluated at the MAP.
 
 ```r
 # Third log-likelihood derivatives evaluated at MAP
@@ -306,9 +306,11 @@ coef_marginal <- function(loc, a2, a3)
   
   if(d_c == 1 )
   {
-    # Mean and Covariance
+    # Mean and variance of the approximation
     L <- a2[idx,loc]/a2[loc,loc]
     bomega <- a2[idx,idx] - a2[idx,loc]%*%t(a2[idx,loc])/a2[loc,loc]
+
+    # Skewness inducing components
     nu_1 <- 0
     nu_3 <- a3[loc,loc,loc]
     for(s in 1:(d-1))
@@ -329,11 +331,13 @@ coef_marginal <- function(loc, a2, a3)
   
   else{
     
-    # Inverse margialal set
+    # Inversion covariance matrix 
     inv.a2.loc <- solve(a2[loc,loc])
-    # Mean and Covariance conditioned set
+    # Mean and Covariance matrix of the approximation
     L <- a2[idx,loc]%*%inv.a2.loc
     bomega <- a2[idx,idx] - a2[idx,loc]%*%inv.a2.loc%*%a2[loc,idx]
+
+    # Skewness inducing components
     nu_1 <- rep(0,d_c)
     nu_3 <- a3[loc,loc,loc]
     # Linear component
@@ -380,7 +384,7 @@ coef_marginal <- function(loc, a2, a3)
 }
 ```
 
-Let us now obtain the joint, bivariate and marginal skew-modal approximations of the posterior density. As with the Laplace approximation, the resulting function are saved for future use. 
+Let us now obtain the joint, bivariates and marginals of the skew-modal approximation of the posterior density. As with the Gaussian Laplace approximation, the resulting function are saved for future use. 
 
 ```r
 
