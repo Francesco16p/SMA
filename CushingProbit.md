@@ -6,17 +6,12 @@ Before starting, create a folder called `ProbitCushing` and set it as the workin
 
 ## Probit regression with STAN
 
-We first define a stan model that estimates a Bayesian probit regression with `y` as the binary response variable and a design matrix equal to `X` using the `rstan` library. The coefficients are assumed to have independent Gaussian priors with zero mean and standard error `sd = 4`. Since obtaining i.i.d. samples from the posterior is not straightforward, we will use the STAN environment to generate 4 Hamiltonian Monte Carlo chains of length 10,000, which will allow us to obtain an accurate approximation of the posterior. The STAN model depends on five quantities: the sample size `N`, the number of parameters in the model `D`, the design matrix `X`, which also includes the intercept, the response variable `y`, and the standard error of the prior sd`.
+We first define a STAN model that estimates a Bayesian probit regression with `y` as the binary response variable and a design matrix equal to `X` using the `rstan` library. The coefficients are assumed to have independent Gaussian priors with zero mean and standard error `sd = 5`. Since obtaining i.i.d. samples from the posterior is not straightforward, we will use the STAN environment to generate 4 Hamiltonian Monte Carlo chains of length 10,000, which will allow us to obtain an accurate approximation of the posterior. The STAN model depends on five quantities: the sample size `N`, the number of parameters in the model `D`, the design matrix `X`, which also includes the intercept, the response variable `y`, and the standard error of the prior `sd`.
 
 ```
 // Probit regression with STAN
 
-/* First define the data structure, N is the sample size, D is the number
- of the parameters in the model, X is the design matrix which contains
- also the intercept, y is the response variable and sd is the standard error 
- of the prior */
-
-data {
+stan_model_file <- 'data{
     int<lower=0> N; // number of observations
     int<lower=0> D; // number of predictors
     matrix[N, D] X; // design matrix
@@ -36,9 +31,8 @@ model {
 }
 
 ```
-We then save the file for future use with the name `probit regression STAN.stan`.
 
-To estimate the model, we first load the data from the file `Cushings.RData`, which was previously created in the `CushingsLogistic.md` tutorial. The code below loads the dataset, estimates the probit regression using 4 chains of length 10,000 of Hamiltonian Monte Carlo and saves the results for future use.
+To estimate the model, we first load the data in the file `Cushings.RData`, which was previously created in the [`CushingLogistic.md`](https://github.com/Francesco16p/SMA/blob/main/CushingLogistic.md) tutorial. The code below loads the dataset, estimates the probit regression using 4 chains of length 10,000 of Hamiltonian Monte Carlo and saves the results for future use.
 
 ```r
 # Load the required library
@@ -53,14 +47,8 @@ load("Cushings.RData")
 # Create a list with y,X,N, D = 3 and sd = 5
 df <- list( y = y, X = X, D = ncol(X), N = nrow(X), sd = 5)
 
-# Define the Stan model file path
-stan_model_file <- 'probit regression STAN.stan'
-
-# Compile the model
-stan_model <- stan_model(stan_model_file)
-
 # Fit the model
-fit <- sampling(stan_model, data = df, iter = 10^4, chains = 4, warmup = 5000, seed = 1)
+fit <- stan(model_code = stan_model_file, data = df, iter = 10^4, chains = 4, warmup = 5000, seed = 1)
 
 # Extract MCMC results
 MCMC_probit <- extract(fit)$theta
@@ -72,12 +60,12 @@ save(MCMC_probit,file = "MCMC_probit.RData")
 
 ### Estimate posterior densities using `mclust`
 
-At this point, it is possible to use Markov Chain Monte Carlo simulation to estimate the joint, bivariate and marginal posterior densities using the `mclust` library. These estimated densities are used as proxies for the exact posterior to evaluate the quality of different approximations. In the following, the numbers 0,1,2 indicate which parameters the density refers to. To estimate such functions, write
+It is now possible to use Markov Chain Monte Carlo simulation to estimate the joint, bivariate and marginal posterior densities using the `mclust` library. These estimated densities are used as proxies for the exact posterior to evaluate the quality of different approximations. In the following, the numbers 0, 1 and 2 indicate which parameters the density refers to. To estimate such functions, write:
 
 ```r
 library(mclust)
 
-# Estimated joint posterior density
+# Estimated joint posterior density (theta_0,theta_1,theta_2)
 d012_probit <- densityMclust( MCMC_probit[,1:3])
 
 post_theta_012_probit <- function(x)
@@ -86,7 +74,7 @@ post_theta_012_probit <- function(x)
   predict(d012_probit,x)
 }
 
-# Bivariate posterior density theta_0 and theta_1
+# Bivariate posterior density (theta_0, theta_1)
 d01_probit <- densityMclust( MCMC_probit[,1:2])
 
 post_theta_01_probit <- function(x)
@@ -95,7 +83,7 @@ post_theta_01_probit <- function(x)
   predict(d01_probit, x)
 }
 
-# Bivariate posterior density theta_0 and theta_2
+# Bivariate posterior density (theta_0, theta_2)
 d02_probit <- densityMclust( MCMC_probit[,c(1,3)])
 
 post_theta_02_probit <- function(x)
@@ -104,7 +92,7 @@ post_theta_02_probit <- function(x)
   predict(d02_probit, x)
 }
 
-# Bivariate posterior density theta_1 and theta_2
+# Bivariate posterior density (theta_1, theta_2)
 d12_probit <- densityMclust( MCMC_probit[,c(2,3)])
 
 post_theta_12_probit <- function(x)
@@ -154,18 +142,20 @@ save(d0_probit,d1_probit,d2_probit,d01_probit,
 
 ## Laplace and skew-modal approximations
 
-Let us now obtain both the Gaussian Laplace and the skew-modal approximations of the posterior distribution. This process involves the computation of the posterior mode (MAP), of the observed information and of the third log-likelihood derivative.
+Let us now obtain both the Gaussian Laplace and the skew-modal approximations of the posterior distribution. This process involves the computation of the posterior mode (MAP), of the observed Fisher information and of the third log-likelihood derivative.
 
 ### Evaluation of the posterior mode
 
-To obtain the MAP estimate, it is sufficient to maximise the posterior distribution using the `R` function `optim()`. We do this by clearing the global environment, loading the `mvtnorm` library and defining the function `log_post()`, which corresponds to the posterior distribution as defined in section 5.2 of the main paper for probit regression.
+To obtain the MAP estimate, it is sufficient to maximise the posterior distribution using the `R` function `optim()`. We do this by clearing the global environment, loading the `mvtnorm` library and defining the function `log_post()`, which corresponds to the posterior distribution induced by the model under analysis.
 
 ```r
+# Clear the workspace by removing all objects
 rm(list = ls())
+
 # Loading libraries
 library(mvtnorm)
 
-# Load data
+# Load dataset
 load("Cushings.RData")
 d <- dim(X)[2] # number of parameters
 
@@ -191,7 +181,7 @@ map_probit <- optim(rep(0,d), function(k) -log_post_probit(k),method ="BFGS", he
 
 ### Log-likelihood derivatives
 
-The observed information evaluated at MAP is computed directly by the `optim()` function and stored in `map_probit$par`. Note that, as described in the main paper, this quantity is needed to obtain both Laplace and skew-modal approximations. We also define the function `trd_derivative_probit()` to compute the third derivative of the log-likelihood.
+The observed Fisher information evaluated at MAP is computed directly by the `optim()` function and stored in `map_probit$par`. Note that, as described in the main paper, this quantity is needed to obtain both Laplace and skew-modal approximations. We also define the function `trd_derivative_probit()` to compute the third derivative of the log-likelihood.
 
 ```r
 
@@ -236,7 +226,7 @@ trd_derivative_probit <- function(theta)
 
 ### Gaussian Laplace approximations
 
-At this point it is possible to obtain the joint, bivariate and marginal Gaussian Laplace approximations of the posterior density by writing
+At this point it is possible to obtain the joint, bivariates and marginals of the Gaussian Laplace approximation of the posterior density by writing:
 
 ```r
 la_probit <- list()
@@ -244,43 +234,43 @@ la_probit$m <- map_probit$par
 la_probit$V <- solve(obsInf)
 
 
-# Joint Laplace approximation
+# Joint Gaussian Laplace approximation (theta_0,theta_1,theta_2)
 la_theta012_probit <- function(theta)
 {
   mvtnorm::dmvnorm(theta, mean = la_probit$m, sigma = la_probit$V)
 }
 
-# Bivariate Laplace approximation theta_0-theta_1
+# Bivariate Gaussian Laplace approximation (theta_0,theta_1)
 la_theta_01_probit <- function(theta)
 {
   mvtnorm::dmvnorm(theta, mean = la_probit$m[c(1,2)], sigma = la_probit$V[c(1,2),c(1,2)])
 }
 
-# Bivariate Laplace approximation theta_0-theta_2
+# Bivariate Gaussian Laplace approximation (theta_0,theta_2)
 la_theta_02_probit <- function(theta)
 {
   mvtnorm::dmvnorm(theta, mean = la_probit$m[c(1,3)], sigma = la_probit$V[c(1,3),c(1,3)])
 }
 
-# Bivariate Laplace approximation theta_1-theta_2
+# Bivariate Gaussian Laplace approximation (theta_1,theta_2)
 la_theta_12_probit <- function(theta)
 {
   mvtnorm::dmvnorm(theta, mean = la_probit$m[c(2,3)], sigma = la_probit$V[c(2,3),c(2,3)])
 }
 
-# Marginal Lapalce approximation theta_0
+# Marginal Gaussian Laplace approximation theta_0
 la_theta_0_probit <- function(theta)
 {
   dnorm(theta, mean = la_probit$m[1], sd = sqrt(la_probit$V[1,1]))
 }
 
-# Marginal Lapalce approximation theta_1
+# Marginal Gaussian Laplace approximation theta_1
 la_theta_1_probit <- function(theta)
 {
   dnorm(theta, mean = la_probit$m[2], sd = sqrt(la_probit$V[2,2]))
 }
 
-# Marginal Lapalce approximation theta_2
+# Marginal Gaussian Laplace approximation theta_2
 la_theta_2_probit <- function(theta)
 {
   dnorm(theta, mean = la_probit$m[3], sd = sqrt(la_probit$V[3,3]))
