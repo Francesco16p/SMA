@@ -9,6 +9,8 @@ Before starting, create a folder called `ProbitCushing` and set it as the workin
 We first define a STAN model that estimates a Bayesian probit regression with `y` as the binary response variable and a design matrix equal to `X` using the `rstan` library. The coefficients are assumed to have independent Gaussian priors with zero mean and standard error `sd = 5`. Since obtaining i.i.d. samples from the posterior is not straightforward, we will use the STAN environment to generate 4 Hamiltonian Monte Carlo chains of length 10,000, which will allow us to obtain an accurate approximation of the posterior. The STAN model depends on five quantities: the sample size `N`, the number of parameters in the model `D`, the design matrix `X`, which also includes the intercept, the response variable `y`, and the standard error of the prior `sd`.
 
 ```
+rm(list = ls())
+
 // Probit regression with STAN
 
 stan_model_file <- 'data{
@@ -36,7 +38,6 @@ To estimate the model, we first load the data in the file `Cushings.RData`, whic
 
 ```r
 # Load the required library
-rm(list = ls())
 library(rstan)
 options(mc.cores = parallel::detectCores())
 rstan_options(auto_write = TRUE)
