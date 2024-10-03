@@ -512,7 +512,7 @@ save(la_probit,nu_ttt_probit,coef_01_probit,coef_02_probit,
 ```
 
 ##  Mean-field Gaussian variational Bayes approximation
-In the Supplementary Material (Table E.4) we study also the performance of three other approximations, Gaussian mean-field variational Bayes, partially factorized variational Bayes and Gaussian expectation propagation. This section provides the code to obtain the former. To implement the approximation, we use the code developed by Fasano, Durante and Zanella (2022), which can be obtained by downloading the source file `functionsVariational.R` at `https://github.com/augustofasano/Probit-PFMVB`.  Once this source file has been saved into the current working directory, the mean and the covariance matrix of the mean-field approximation are obtained using the following code.
+In the Supplementary Material (Table E.4) we study also the performance of three other approximations, namely Gaussian mean-field variational Bayes, partially factorized variational Bayes and Gaussian expectation propagation. This section provides the code to obtain the former. To implement the approximation, we use the code developed by Fasano, Durante and Zanella (2022), which can be obtained by downloading the source file `functionsVariational.R` at `https://github.com/augustofasano/Probit-PFMVB`.  Once this source file has been saved into the current working directory, the mean and the covariance matrix of the mean-field approximation are obtained using the following code.
 
 ```r
 rm(list = ls())
