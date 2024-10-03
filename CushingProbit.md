@@ -1206,8 +1206,8 @@ df_tv <- cbind(skew_tv,laplace_tv,ep_tv,mf_tv,pfvb_tv)
 
 # Transform all the quantities in table form
 
-colnames(df_tv) <- colnames(df_tv_sd) <- c("Skew-Laplace", "Laplace", "EP", "MF", "PFBV")
-rownames(df_tv) <- rownames(df_tv_sd) <- c("Joint","theta01","theta02", "theta12","theta0","theta1","theta2")
+colnames(df_tv) <- c("Skew-Laplace", "Laplace", "EP", "MF", "PFBV")
+rownames(df_tv) <- c("Joint","theta01","theta02", "theta12","theta0","theta1","theta2")
 t(round(df_tv,2))
 
 # Save the results
