@@ -383,7 +383,7 @@ coef_marginal <- function(loc, a2, a3)
 }
 ```
 
-Let us now obtain the joint, bivariates and marginals of the skew-modal approximation of the posterior density. As with the Gaussian Laplace approximation, the resulting function are saved for future use. 
+Let us now obtain the joint, bivariates and marginals of the skew-modal approximation of the posterior density. As with the Gaussian Laplace approximation, the resulting functions are saved for future use. 
 
 ```r
 
