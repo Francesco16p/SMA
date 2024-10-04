@@ -301,7 +301,7 @@ To obtain joint, bivariates and marginals of the proposed skew-modal approximati
 # Third log-likelihood derivatives evaluated at
 nu_ttt <- trd_derivative(map$par)
 ```
-Once the third log-likelihood derivative is obtained, it is possible to compute the skewness inducing coefficients of the bivariate and marginal skew-modal approximation as reported in section 4.2 of the paper. To do this, we define the function `coef_marginal()`, which takes the following parameters as input: `loc`, a numerical vector containing the position of the parameters to which the bivariate/marginal approximation refers; `a2`, which corresponds to the covariance matrix of the Gaussian component and `a3`, the array of the third log-likelihood derivatives.
+Once the third log-likelihood derivative is obtained, it is possible to compute the skewness inducing coefficients of the bivariate and marginal skew-modal approximations as reported in section 4.2 of the paper. To do this, we define the function `coef_marginal()`, which takes the following parameters as input: `loc`, a numerical vector containing the position of the parameters to which the bivariate/marginal approximation refers; `a2`, which corresponds to the covariance matrix of the Gaussian component and `a3`, the array of the third log-likelihood derivatives.
 
 ```r
 # Parameters:
