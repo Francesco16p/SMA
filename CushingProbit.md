@@ -620,7 +620,7 @@ simulated_pfvb <- sampleSUN_PFM(paramsPFM=paramsSMF,X=X,y=y,nu2=nu2,
                                nSample=10^4)
 simulated_pfvb <- t(simulated_pfvb)
 ```
-We then estimate the densities of the joint, bivariates and marginals of the partially factorised mean-field approximations using the `mclust` library as it was done for the posterior distribution.
+We then estimate the densities of the joint, bivariates and marginals of the partially factorised mean-field approximation using the `mclust` library as it was done for the posterior distribution.
 
 ```r
 # Estimated joint PFVB approximation (theta_0,theta_1,theta_2)
