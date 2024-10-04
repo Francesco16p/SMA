@@ -1281,7 +1281,7 @@ sim_ske <- ske_sim(nsim)
 sim_la <- mvtnorm::rmvnorm(n = nsim,mean = la_probit$m, sigma = la_probit$V)
 ```
 
-At this point we can compute the mean absolute difference between the HPD intervals of the probit posterior and the ones of the two approximation.
+At this point we can compute the mean absolute difference between the HPD intervals of the probit posterior and the ones of the two approximations.
 
 ### $\alpha = 0.95$
 ```r
